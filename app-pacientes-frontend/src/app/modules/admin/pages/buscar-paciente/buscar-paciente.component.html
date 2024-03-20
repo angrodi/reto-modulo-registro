@@ -1,0 +1,165 @@
+<h4 class="uppercase">Pacientes</h4>
+<mat-divider></mat-divider>
+
+<div class="mt-4">
+  <mat-radio-group aria-label="Select una opción" [(ngModel)]="searchOption" (change)="changeSearchOption()">
+    <mat-radio-button value="doc" class="mr-4">Por Documento Identidad</mat-radio-button>
+    <mat-radio-button value="nombre">Por nombre y apellidos</mat-radio-button>
+  </mat-radio-group>
+</div>
+
+<div class="">
+  <div class="flex">
+    <form [formGroup]="docForm" (submit)="save()" class="grow">
+      <div class="flex mt-4 pt-2">
+        <!-- Tipo de Documento -->
+        <mat-form-field appearance="outline" class="grow">
+          <mat-label>Tipo de Documento</mat-label>
+          <mat-select formControlName="tipoDocIdentidad">
+            <mat-option [value]="tipoDoc.idTipoDocIdentidad" *ngFor="let tipoDoc of tiposDocIdentidad">{{ tipoDoc.descripcion }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="isRequiredField('tipoDocIdentidad',docForm)">Tipo de Documento es requerido</mat-error>
+        </mat-form-field>
+  
+  
+        <!-- Número de Documento -->
+        <mat-form-field appearance="outline" class="grow ml-4">
+          <mat-label>N° Documento</mat-label>
+          <input matInput #docIdentidadInput onlyNumber
+                maxlength="30"
+                formControlName="docIdentidad"
+                required
+                cdkFocusInitial>
+                <mat-error *ngIf="isRequiredField('docIdentidad',docForm)">Número de Documento es requerido</mat-error>
+        </mat-form-field>
+      </div>
+    </form>
+  
+    <form [formGroup]="nameForm" (submit)="save()" class="grow">
+      <div class="flex mt-4 pt-2">
+        <!-- Apellidos -->
+        <mat-form-field appearance="outline" class="grow ml-4">
+          <mat-label>Apellidos</mat-label>
+          <input matInput #apellidosInput
+                maxlength="30"
+                formControlName="apellidos"
+                cdkFocusInitial>
+        </mat-form-field>
+
+        <!-- Nombres -->
+        <mat-form-field appearance="outline" class="grow ml-4">
+          <mat-label>Nombres</mat-label>
+          <input matInput #nombresInput
+                maxlength="30"
+                formControlName="nombres"
+                cdkFocusInitial>
+        </mat-form-field>
+      </div>
+      <div class="ml-4 mt-0">
+      </div>
+    </form>
+  </div>
+
+  <div class="flex flex-row-reverse mb-8">
+    <button mat-raised-button color="primary" (click)="limpiar()">
+      <span>Limpiar</span>
+    </button>
+
+    <button mat-raised-button color="primary" class="mr-4" (click)="buscarPaciente()">
+      <span>Buscar</span>
+    </button>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="flex flex-row-reverse mt-8">
+    <button mat-raised-button color="primary" (click)="nuevoPaciente()">
+      <span>Registrar paciente</span>
+    </button>
+  </div>
+
+  <div class="mt-4">
+    <!-- <mat-form-field class="w-100">
+      <mat-label>Buscar</mat-label>
+      <input matInput (keyup)="filter($event)" placeholder="Escriba una palabra clave" #input>
+    </mat-form-field> -->
+
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource" matSort>
+  
+        <!-- Columna Nombre -->
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-uppercase"> Nombre </th>
+          <td mat-cell *matCellDef="let paciente">{{ paciente | fullname }}</td>
+        </ng-container>
+  
+        <!-- Columna Tipo de Documento -->
+        <ng-container matColumnDef="tipoDoc">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-uppercase"> Tipo de Documento </th>
+          <td mat-cell *matCellDef="let paciente">{{ paciente.tipoDocIdentidad.codigoIeds }}</td>
+        </ng-container>
+  
+        <!-- Columna Número de Documento -->
+        <ng-container matColumnDef="docIdentidad">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-uppercase"> Número de Documento </th>
+          <td mat-cell *matCellDef="let paciente">{{ paciente.documentoIdentidad }}</td>
+        </ng-container>
+  
+        <!--Columna Fecha de Nacimiento  -->
+        <ng-container matColumnDef="fechaNac">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-uppercase"> Fecha de Nacimiento </th>
+          <td mat-cell *matCellDef="let paciente">{{ paciente.fechaNacimiento | date:'dd/MM/YYYY' }}</td>
+        </ng-container> 
+  
+        <!-- Columna Estado -->
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-uppercase"> Estado </th>
+          <td mat-cell *matCellDef="let paciente">
+            <section>
+              <mat-checkbox [checked]="true"></mat-checkbox>
+            </section>
+          </td>
+        </ng-container>
+
+        <!-- Columna Editar -->
+        <ng-container matColumnDef="editar">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-uppercase"> Editar </th>
+          <td mat-cell *matCellDef="let paciente">
+            <button mat-icon-button color="primary" (click)="editUser(paciente)">
+              <mat-icon class="material-icons-two-tone">create</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <!-- Columna Eliminar -->
+        <ng-container matColumnDef="eliminar">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-uppercase"> Eliminar </th>
+          <td mat-cell *matCellDef="let paciente">
+            <button mat-icon-button color="primary" (click)="deleteUser(paciente.idPaciente)">
+              <mat-icon class="material-icons-two-tone">delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+  
+        <tr mat-header-row class="bg-primary" *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        
+        <tr class="mat-row" *matNoDataRow>
+          <!-- <td *ngIf="dataSource.data.length !== 0"
+              class="mat-cell" colspan="6">
+            No se encontró ningun dato que coincida con "{{input.value}}"
+          </td> -->
+          <td *ngIf="dataSource.data.length === 0"
+              class="mat-cell" colspan="6" class="p-4">
+            No se encontraron pacientes registrados
+          </td>
+        </tr>
+      </table>
+
+      <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons class="mt-2">
+      </mat-paginator>
+    </div>
+
+
+  </div>
+</div>

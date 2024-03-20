@@ -1,0 +1,289 @@
+<h4 class="uppercase">Datos del paciente</h4>
+<mat-divider></mat-divider>
+
+<div>
+  <div class="flex mb-10">
+    <form [formGroup]="pacienteForm" class="grow">
+      <div class="grid grid-cols-5 gap-4 mt-4 pt-2">
+        <!-- Tipo de Documento -->
+        <mat-form-field appearance="outline">
+          <mat-label>Tipo de Documento</mat-label>
+          <mat-select formControlName="idTipoDocIdentidad">
+            <mat-option [value]="tipoDoc.idTipoDocIdentidad" *ngFor="let tipoDoc of tiposDocIdentidad">{{ tipoDoc.descripcion }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="isRequiredField('idTipoDocIdentidad', pacienteForm)">Tipo de Documento requerido</mat-error>
+        </mat-form-field>
+  
+  
+        <!-- Número de Documento -->
+        <mat-form-field appearance="outline">
+          <mat-label>N° Documento</mat-label>
+          <input matInput #documentoIdentidadInput onlyNumber
+                maxlength="30"
+                formControlName="documentoIdentidad"
+                required>
+                <mat-error *ngIf="isRequiredField('documentoIdentidad', pacienteForm)">Número de Documento requerido</mat-error>
+        </mat-form-field>
+
+        <!-- Apellido Paterno -->
+        <mat-form-field appearance="outline">
+          <mat-label>Apellido Paterno</mat-label>
+          <input matInput #apePaternoInput
+                maxlength="30"
+                formControlName="apellidoPaterno">
+          <mat-error *ngIf="isRequiredField('apellidoPaterno', pacienteForm)">Apellido paterno requerido</mat-error>
+        </mat-form-field>
+
+        <!-- Apellido Materno -->
+        <mat-form-field appearance="outline">
+          <mat-label>Apellido Materno</mat-label>
+          <input matInput #apeMaternoInput
+                maxlength="30"
+                formControlName="apellidoMaterno">
+          <mat-error *ngIf="isRequiredField('apellidoMaterno', pacienteForm)">Apellido materno requerido</mat-error>
+        </mat-form-field>
+
+        <!-- Nombres -->
+        <mat-form-field appearance="outline">
+          <mat-label>Nombres</mat-label>
+          <input matInput #nombresInput
+                maxlength="30"
+                formControlName="nombres">
+          <mat-error *ngIf="isRequiredField('nombres', pacienteForm)">Nombres requerido</mat-error>
+        </mat-form-field>
+      </div>
+
+      
+
+      <div class="grid grid-cols-5 gap-4 mt-4 pt-2">
+        <!-- Sexo -->
+        <mat-form-field appearance="outline">
+          <mat-label>Sexo</mat-label>
+          <mat-select formControlName="idSexo">
+            <mat-option [value]="sexo.idSexo" *ngFor="let sexo of sexos">{{ sexo.descripcion }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="isRequiredField('idSexo', pacienteForm)">Sexo requerido</mat-error>
+        </mat-form-field>
+  
+  
+        <!-- Fecha de Nacimiento -->
+        <mat-form-field>
+          <mat-label>Fecha de Nacimiento</mat-label>
+          <input matInput [matDatepicker]="picker" [max]="maxDate" formControlName="fechaNacimiento" (ngModelChange)="changeDate()">
+          <!-- <mat-hint>MM/DD/YYYY</mat-hint> -->
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="isRequiredField('fechaNacimiento', pacienteForm)">Fecha nacimiento requerido</mat-error>
+        </mat-form-field>
+
+        <!-- Edad -->
+        <mat-form-field appearance="outline">
+          <mat-label>Edad</mat-label>
+          <input matInput #edadInput
+                maxlength="30"
+                formControlName="edad">
+          <mat-error *ngIf="isRequiredField('edad', pacienteForm)">Edad requerida</mat-error>
+        </mat-form-field>
+
+        <!-- Lugar de Nacimiento -->
+        <mat-form-field appearance="outline" class="col-span-2">
+          <mat-label>Lugar de Nacimiento</mat-label>
+          <input matInput #lugarNacimientoInput
+                maxlength="30"
+                formControlName="lugarNacimiento">
+          <mat-error *ngIf="isRequiredField('lugarNacimiento', pacienteForm)">Lugar de nacimiento requerido</mat-error>
+        </mat-form-field>
+      </div>
+
+
+
+      <div class="grid grid-cols-5 gap-4 mt-4 pt-2">
+        <!-- Dirección -->
+        <mat-form-field appearance="outline" class="col-span-2">
+          <mat-label>Dirección</mat-label>
+          <input matInput #direccionInput
+                maxlength="30"
+                formControlName="direccion">
+          <mat-error *ngIf="isRequiredField('direccion', pacienteForm)">Dirección requerida</mat-error>
+        </mat-form-field>
+
+        <!-- Departamento -->
+        <mat-form-field appearance="outline">
+          <mat-label>Departamento</mat-label>
+          <mat-select formControlName="codigoDepartamento" (selectionChange)="cargarProvincias(pacienteForm, 'P')">
+            <mat-option [value]="departamento.codigo" *ngFor="let departamento of departamentos">{{ departamento.descripcion }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="isRequiredField('codigoDepartamento', pacienteForm)">Departamento requerido</mat-error>
+        </mat-form-field>
+
+        <!-- Provincia -->
+        <mat-form-field appearance="outline">
+          <mat-label>Provincia</mat-label>
+          <mat-select formControlName="codigoProvincia" (selectionChange)="cargarDistritos(pacienteForm,'P')">
+            <mat-option [value]="provincia.codigo" *ngFor="let provincia of provincias">{{ provincia.descripcion }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="isRequiredField('codigoProvincia',pacienteForm)">Provincia requerida</mat-error>
+        </mat-form-field>
+
+        <!-- Distrito -->
+        <mat-form-field appearance="outline">
+          <mat-label>Distrito</mat-label>
+          <mat-select formControlName="codigoDistrito">
+            <mat-option [value]="distrito.codigo" *ngFor="let distrito of distritos">{{ distrito.descripcion }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="isRequiredField('codigoDistrito',pacienteForm)">Distrito requerido</mat-error>
+        </mat-form-field>
+      </div>
+    </form>
+  </div>
+
+  <h4 class="uppercase">Datos del acompañante</h4>
+  <mat-divider></mat-divider>
+
+
+  
+  <div class="flex mt-8 mb-8">
+    <form [formGroup]="acompananteForm" class="grow">
+      <div class="grid grid-cols-5 gap-4 mt-4 pt-2">
+        <!-- Tipo de Documento -->
+        <mat-form-field appearance="outline">
+          <mat-label>Tipo de Documento</mat-label>
+          <mat-select formControlName="idTipoDocIdentidad">
+            <mat-option [value]="tipoDoc.idTipoDocIdentidad" *ngFor="let tipoDoc of tiposDocIdentidad">{{ tipoDoc.descripcion }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="isRequiredField('idTipoDocIdentidad', acompananteForm)">Tipo de Documento requerido</mat-error>
+        </mat-form-field>
+  
+  
+        <!-- Número de Documento -->
+        <mat-form-field appearance="outline">
+          <mat-label>N° Documento</mat-label>
+          <input matInput onlyNumber
+                maxlength="30"
+                formControlName="documentoIdentidad"
+                required>
+                <mat-error *ngIf="isRequiredField('documentoIdentidad', acompananteForm)">Número de Documento requerido</mat-error>
+        </mat-form-field>
+
+        <!-- Apellido Paterno -->
+        <mat-form-field appearance="outline">
+          <mat-label>Apellido Paterno</mat-label>
+          <input matInput
+                maxlength="30"
+                formControlName="apellidoPaterno">
+          <mat-error *ngIf="isRequiredField('apellidoPaterno', acompananteForm)">Apellido paterno requerido</mat-error>
+        </mat-form-field>
+
+        <!-- Apellido Materno -->
+        <mat-form-field appearance="outline">
+          <mat-label>Apellido Materno</mat-label>
+          <input matInput
+                maxlength="30"
+                formControlName="apellidoMaterno">
+          <mat-error *ngIf="isRequiredField('apellidoMaterno', acompananteForm)">Apellido materno requerido</mat-error>
+        </mat-form-field>
+
+        <!-- Nombres -->
+        <mat-form-field appearance="outline">
+          <mat-label>Nombres</mat-label>
+          <input matInput
+                maxlength="30"
+                formControlName="nombres">
+          <mat-error *ngIf="isRequiredField('nombres', acompananteForm)">Nombres requerido</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="grid grid-cols-5 gap-4 mt-4 pt-2">
+
+        <!-- Fecha de Nacimiento -->
+        <mat-form-field>
+          <mat-label>Fecha de Nacimiento</mat-label>
+          <input matInput [matDatepicker]="pickerPA" [max]="maxDate" formControlName="fechaNacimiento" (ngModelChange)="changeDate()">
+          <!-- <mat-hint>MM/DD/YYYY</mat-hint> -->
+          <mat-datepicker-toggle matIconSuffix [for]="pickerPA"></mat-datepicker-toggle>
+          <mat-datepicker #pickerPA></mat-datepicker>
+          <mat-error *ngIf="isRequiredField('fechaNacimiento', acompananteForm)">Fecha nacimiento requerido</mat-error>
+        </mat-form-field>
+
+        <!-- Edad -->
+        <mat-form-field appearance="outline">
+          <mat-label>Edad</mat-label>
+          <input matInput
+                maxlength="30"
+                formControlName="edad">
+          <mat-error *ngIf="isRequiredField('edad', acompananteForm)">Edad requerida</mat-error>
+        </mat-form-field>
+
+        <!-- Parentesco -->
+        <mat-form-field appearance="outline">
+          <mat-label>Parentesco</mat-label>
+          <mat-select formControlName="idParentesco">
+            <mat-option [value]="parentesco.idParentesco" *ngFor="let parentesco of parentescos">{{ parentesco.parentesco }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="isRequiredField('idParentesco', acompananteForm)">Parentesco requerido</mat-error>
+        </mat-form-field>
+
+        <!-- Teléfono de Contacto -->
+        <mat-form-field appearance="outline" class="col-span-2">
+          <mat-label>Teléfono de Contacto</mat-label>
+          <input matInput onlyNumberComa
+                maxlength="30"
+                formControlName="telefonoContacto">
+          <mat-error *ngIf="isRequiredField('telefonoContacto', acompananteForm)">Teléfono de contacto requerido</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="grid grid-cols-5 gap-4 mt-4 pt-2">
+        <!-- Dirección -->
+        <mat-form-field appearance="outline" class="col-span-2">
+          <mat-label>Dirección</mat-label>
+          <input matInput
+                maxlength="30"
+                formControlName="direccion">
+          <mat-error *ngIf="isRequiredField('direccion', acompananteForm)">Dirección requerida</mat-error>
+        </mat-form-field>
+
+        <!-- Departamento -->
+        <mat-form-field appearance="outline">
+          <mat-label>Departamento</mat-label>
+          <mat-select formControlName="codigoDepartamento" (selectionChange)="cargarProvincias(acompananteForm, 'A')">
+            <mat-option [value]="departamento.codigo" *ngFor="let departamento of departamentos">{{ departamento.descripcion }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="isRequiredField('codigoDepartamento', acompananteForm)">Departamento requerido</mat-error>
+        </mat-form-field>
+
+        <!-- Provincia -->
+        <mat-form-field appearance="outline">
+          <mat-label>Provincia</mat-label>
+          <mat-select formControlName="codigoProvincia" (selectionChange)="cargarDistritos(acompananteForm, 'A')">
+            <mat-option [value]="provincia.codigo" *ngFor="let provincia of provinciasAcomp">{{ provincia.descripcion }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="isRequiredField('codigoProvincia',acompananteForm)">Provincia requerida</mat-error>
+        </mat-form-field>
+
+        <!-- Distrito -->
+        <mat-form-field appearance="outline">
+          <mat-label>Distrito</mat-label>
+          <mat-select formControlName="codigoDistrito">
+            <mat-option [value]="distrito.codigo" *ngFor="let distrito of distritosAcomp">{{ distrito.descripcion }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="isRequiredField('codigoDistrito',acompananteForm)">Distrito requerido</mat-error>
+        </mat-form-field>
+      </div>
+    </form>
+  </div>
+
+
+
+
+  <div class="flex flex-row-reverse mb-8">
+    <button mat-raised-button color="primary" (click)="regresar()">
+      <span>Cancelar</span>
+    </button>
+
+    <button mat-raised-button color="primary" class="mr-4" (click)="guardar()">
+      <span>Guardar</span>
+    </button>
+  </div>
+
+</div>
